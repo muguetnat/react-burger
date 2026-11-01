@@ -1,4 +1,6 @@
-import { Ingredient } from './Ingredient';
+import Typography from '@components/shared/typography';
+
+import { Ingredient } from './ingredient';
 
 import type { TIngredient } from '@utils/types';
 
@@ -11,18 +13,13 @@ type TGroupProps = {
 
 export const Group = ({ category, items }: TGroupProps): React.JSX.Element => {
   return (
-    <li>
-      <h1>{category}</h1>
+    <div>
+      <Typography type="medium" text={category} />
       <div className={styles.ingredient_list}>
         {items.map((ingredient) => (
-          <Ingredient
-            key={ingredient._id}
-            name={ingredient.name}
-            price={ingredient.price}
-            image={ingredient.image}
-          />
+          <Ingredient key={ingredient._id} {...ingredient} />
         ))}
       </div>
-    </li>
+    </div>
   );
 };

@@ -3,4 +3,8 @@ export type TIngredientProps = {
   counter?: number;
   name: string;
   price: number;
+  calories: number;
+  proteins: number;
+  fat: number;
+  carbohydrates: number;
 };

@@ -1,6 +1,6 @@
 import { Tab } from '@krgaa/react-developer-burger-ui-components';
 
-import { Group } from './Group';
+import { Group } from './group';
 
 import type { TIngredient } from '@utils/types';
 
@@ -10,17 +10,15 @@ type TBurgerIngredientsProps = {
   ingredients: TIngredient[];
 };
 
+const categories = [
+  { id: 'bun', title: 'Булки' },
+  { id: 'main', title: 'Начинки' },
+  { id: 'sauce', title: 'Соусы' },
+];
+
 export const BurgerIngredients = ({
   ingredients,
 }: TBurgerIngredientsProps): React.JSX.Element => {
-  console.log(ingredients);
-
-  const categories = [
-    { id: 'bun', title: 'Булки' },
-    { id: 'main', title: 'Начинки' },
-    { id: 'sauce', title: 'Соусы' },
-  ];
-
   return (
     <section className={styles.burger_ingredients}>
       <nav>
@@ -54,7 +52,7 @@ export const BurgerIngredients = ({
           </Tab>
         </ul>
       </nav>
-      <ul className={styles.categories}>
+      <div className={`${styles.categories} custom-scroll`}>
         {categories.map((cat) => (
           <Group
             key={cat.id}
@@ -62,7 +60,7 @@ export const BurgerIngredients = ({
             category={cat.title}
           />
         ))}
-      </ul>
+      </div>
     </section>
   );
 };
