@@ -4,10 +4,10 @@ import {
   Button,
   CurrencyIcon,
 } from '@krgaa/react-developer-burger-ui-components';
-import { useState } from 'react';
 
 import Modal from '@components/modals/modal';
 import Typography from '@components/shared/typography';
+import { useModal } from '@hooks/useModal';
 
 import OrderDetails from './order-details';
 
@@ -22,37 +22,41 @@ type TBurgerConstructorProps = {
 export const BurgerConstructor = ({
   ingredients,
 }: TBurgerConstructorProps): React.JSX.Element => {
-  const [showModal, setShowModal] = useState(false);
+  const { isModalOpen, closeModal, openModal } = useModal();
 
   function createOrder(): void {
-    setShowModal(true);
+    openModal();
   }
 
-  function handleClose(): void {
-    setShowModal(!showModal);
-  }
+  const ingredientsOnly = ingredients.filter((i) => i.type !== 'bun');
+  const bun = ingredients[0];
 
   return (
     <section className={styles.burger_constructor}>
+      <ConstructorElement
+        type="top"
+        price={bun.price}
+        text={`${bun.name} (верх)`}
+        thumbnail={bun.image}
+        isLocked
+        extraClass={styles.bun}
+      />
       <ul className={`${styles.list} custom-scroll`}>
-        {ingredients.map((i, index) => (
+        {ingredientsOnly.map((i) => (
           <li key={i._id}>
             <DragIcon type="primary" className="margin-right:20px" />
-            <ConstructorElement
-              type={
-                index == 0
-                  ? 'top'
-                  : index === ingredients.length - 1
-                    ? 'bottom'
-                    : undefined
-              }
-              price={i.price}
-              text={i.name}
-              thumbnail={i.image}
-            />
+            <ConstructorElement price={i.price} text={i.name} thumbnail={i.image} />
           </li>
         ))}
       </ul>
+      <ConstructorElement
+        type="bottom"
+        price={bun.price}
+        text={`${bun.name} (низ)`}
+        thumbnail={bun.image}
+        isLocked
+        extraClass={styles.bun}
+      />
       <div className={styles.make_order_container}>
         <Typography type="digits_medium" text="610" />
         <CurrencyIcon className={styles.icon} type="primary" />
@@ -66,8 +70,8 @@ export const BurgerConstructor = ({
           Оформить заказ
         </Button>
       </div>
-      {showModal && (
-        <Modal onClose={handleClose}>
+      {isModalOpen && (
+        <Modal onClose={closeModal}>
           <OrderDetails />
         </Modal>
       )}

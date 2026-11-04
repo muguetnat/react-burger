@@ -20,7 +20,11 @@ export const App = (): React.JSX.Element => {
 
   useEffect(() => {
     fetch(API_URL)
-      .then((response) => response.json())
+      .then((response) => {
+        return response.ok
+          ? response.json()
+          : Promise.reject(new Error(`Ошибка ${response.status}`));
+      })
       .then((response: TResponse) => {
         if (response.success) {
           setData(response.data);
@@ -28,7 +32,7 @@ export const App = (): React.JSX.Element => {
         }
       })
       .catch((error) => {
-        console.log(`error ${JSON.stringify(error)}`);
+        console.log(`Ошибка ${JSON.stringify(error)}`);
       });
   }, []);
 

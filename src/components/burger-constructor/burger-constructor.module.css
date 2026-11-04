@@ -21,6 +21,10 @@
   }
 }
 
+.bun {
+  margin-left: 70px;
+}
+
 .make_order_container {
   display: inline-flex;
   justify-content: end;

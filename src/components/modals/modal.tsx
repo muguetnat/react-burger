@@ -13,6 +13,8 @@ type ModalProps = {
 };
 
 function Modal({ children, title, onClose }: ModalProps) {
+  const modal = document.getElementById('modals');
+
   useEffect(() => {
     function handleEscape(event: KeyboardEvent) {
       if (event.key === 'Escape') onClose();
@@ -25,6 +27,10 @@ function Modal({ children, title, onClose }: ModalProps) {
     };
   }, []);
 
+  if (!modal) {
+    return null;
+  }
+
   return createPortal(
     <>
       <ModalOverlay handleClick={onClose} />
@@ -36,7 +42,7 @@ function Modal({ children, title, onClose }: ModalProps) {
         {children}
       </div>
     </>,
-    document.body
+    modal
   );
 }
 
