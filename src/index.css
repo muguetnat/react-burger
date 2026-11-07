@@ -4,7 +4,35 @@ body {
 
 /* Fix for scrollbar */
 
-@supports (scrollbar-color: auto) {
+@supports selector(::-webkit-scrollbar) {
+  :where(.custom-scroll) {
+    scrollbar-color: initial !important;
+    scrollbar-width: initial !important;
+  }
+}
+
+.custom-scroll::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.custom-scroll::-webkit-scrollbar-track {
+  background-color: #2f2f37;
+}
+
+.custom-scroll::-webkit-scrollbar-thumb {
+  background-color: #8585ad;
+  border: 1px solid #2f2f37;
+  border-radius: 0;
+}
+
+.custom-scroll::-webkit-scrollbar-button {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+@supports (scrollbar-color: auto) and (not (-webkit-touch-callout: none)) {
   .custom-scroll {
     scrollbar-color: #8585ad #2f2f37;
     scrollbar-width: thin;

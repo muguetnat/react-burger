@@ -8,15 +8,14 @@
 
 .title {
   width: 100%;
-  max-width: 1260px;
-  margin-right: auto;
-  margin-left: auto;
+  max-width: 1272px;
+  margin: 40px auto 20px;
 }
 
 .main {
   display: flex;
-  justify-content: space-between;
-  width: 1240px;
+  justify-content: center;
+  max-width: 1272px;
   height: 100%;
   margin: 0 auto;
   overflow: hidden;
