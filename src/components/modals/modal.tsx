@@ -8,7 +8,7 @@ import styles from './modal.module.css';
 
 type ModalProps = {
   title?: string;
-  children: JSX.Element;
+  children?: JSX.Element;
   onClose: () => void;
 };
 

@@ -1,17 +1,17 @@
+import { selectedIngredient } from '@/services/ingredients/slice';
+import { useSelector } from 'react-redux';
+
 import Typography from '@components/shared/typography';
 
 import NutricientsItem from './nutricients-item';
 
-import type { TIngredient } from '@utils/types';
-
 import styles from './burger-ingredients.module.css';
 
-type IngredientDetailsProps = {
-  ingredient: TIngredient;
-};
+export default function IngredientDetails() {
+  const ingredient = useSelector(selectedIngredient);
+  const { image, name, calories, proteins, fat, carbohydrates } = ingredient || {};
+  if (!ingredient) return null;
 
-export default function IngredientDetails({ ingredient }: IngredientDetailsProps) {
-  const { image, name, calories, proteins, fat, carbohydrates } = ingredient;
   return (
     <div className={styles.details_container}>
       <img src={image} className={styles.image} alt={`изображение ${name}`} />

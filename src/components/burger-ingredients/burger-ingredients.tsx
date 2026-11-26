@@ -1,5 +1,7 @@
+import { selectIngredient } from '@/services/ingredients/slice';
 import { Tab } from '@krgaa/react-developer-burger-ui-components';
-import { useState } from 'react';
+import { useState, useLayoutEffect, useRef, type RefObject } from 'react';
+import { useDispatch } from 'react-redux';
 
 import { useModal } from '@hooks/useModal';
 
@@ -26,11 +28,56 @@ export const BurgerIngredients = ({
   ingredients,
 }: TBurgerIngredientsProps): React.JSX.Element => {
   const { isModalOpen, closeModal, openModal } = useModal();
-  const [modalData, setModalData] = useState<TIngredient>();
+  const dispatch = useDispatch();
+  const [tabActive, setTabActive] = useState(categories[0].id);
+  const mainRef = useRef<HTMLDivElement>(null);
+  const categoriesRef: Record<string, RefObject<HTMLDivElement | null>> = {
+    bun: useRef<HTMLDivElement>(null),
+    main: useRef<HTMLDivElement>(null),
+    sauce: useRef<HTMLDivElement>(null),
+  };
+
+  useLayoutEffect(() => {
+    const mainRect = mainRef.current;
+    if (!mainRect) return;
+
+    const handleIngredientsScroll = () => {
+      const mainTop = mainRect.getBoundingClientRect().top;
+
+      let closestTab = tabActive;
+      let minDiff = Infinity;
+
+      Object.entries(categoriesRef).forEach(([key, ref]) => {
+        if (ref.current) {
+          const categoryTop = ref.current.getBoundingClientRect().top;
+          const diff = Math.abs(categoryTop - mainTop);
+
+          if (diff < minDiff) {
+            minDiff = diff;
+            closestTab = key;
+          }
+        }
+      });
+
+      if (closestTab !== tabActive) {
+        setTabActive(closestTab);
+      }
+    };
+
+    mainRect.addEventListener('scroll', handleIngredientsScroll);
+    return () => {
+      mainRect.removeEventListener('scroll', handleIngredientsScroll);
+    };
+  }, [tabActive]);
 
   function handleShowDetails(ingredient: TIngredient) {
-    setModalData(ingredient);
+    dispatch(selectIngredient(ingredient));
     openModal();
+  }
+
+  function handleCloseIngredientDetails() {
+    dispatch(selectIngredient({}));
+    closeModal();
   }
 
   return (
@@ -40,7 +87,7 @@ export const BurgerIngredients = ({
           <ul className={styles.menu}>
             <Tab
               value="bun"
-              active={true}
+              active={tabActive === 'bun'}
               onClick={() => {
                 /* TODO */
               }}
@@ -49,7 +96,7 @@ export const BurgerIngredients = ({
             </Tab>
             <Tab
               value="main"
-              active={false}
+              active={tabActive === 'main'}
               onClick={() => {
                 /* TODO */
               }}
@@ -58,7 +105,7 @@ export const BurgerIngredients = ({
             </Tab>
             <Tab
               value="sauce"
-              active={false}
+              active={tabActive === 'sauce'}
               onClick={() => {
                 /* TODO */
               }}
@@ -67,9 +114,10 @@ export const BurgerIngredients = ({
             </Tab>
           </ul>
         </nav>
-        <div className={`${styles.categories} custom-scroll`}>
+        <div className={`${styles.categories} custom-scroll`} ref={mainRef}>
           {categories.map((cat) => (
             <Group
+              ref={categoriesRef[cat.id]}
               key={cat.id}
               items={ingredients.filter((i) => i.type === cat.id)}
               category={cat.title}
@@ -85,9 +133,9 @@ export const BurgerIngredients = ({
           ))}
         </div>
       </section>
-      {isModalOpen && modalData && (
-        <Modal onClose={closeModal} title="Детали ингредиента">
-          <IngredientDetails ingredient={modalData} />
+      {isModalOpen && (
+        <Modal onClose={handleCloseIngredientDetails} title="Детали ингредиента">
+          <IngredientDetails />
         </Modal>
       )}
     </>
