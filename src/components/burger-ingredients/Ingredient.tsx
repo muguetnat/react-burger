@@ -1,27 +1,40 @@
+import { ingredientCounter } from '@/services/constructor/constructor-slice';
 import { CurrencyIcon, Counter } from '@krgaa/react-developer-burger-ui-components';
+import { useRef } from 'react';
+import { useDrag } from 'react-dnd';
+import { useSelector } from 'react-redux';
 
 import Typography from '@components/shared/typography';
 
-import type { TIngredientProps } from './types';
+import type { TIngredient } from '@utils/types';
 
 import styles from './burger-ingredients.module.css';
 
 type IngredientProps = {
-  ingredient: TIngredientProps;
+  ingredient: TIngredient;
   counter?: number;
   showDetails: () => void;
 };
 
 export const Ingredient = ({
   ingredient,
-  counter,
   showDetails,
 }: IngredientProps): React.JSX.Element => {
   const { name, price, image } = ingredient;
+  const counter = useSelector(ingredientCounter);
+
+  const ref = useRef<HTMLDivElement>(null);
+  const [, dragRef] = useDrag(() => ({
+    type: 'ingredient',
+    item: { ingredient },
+  }));
+  dragRef(ref);
 
   return (
-    <div className={styles.ingredient_container} onClick={showDetails}>
-      {counter && <Counter count={counter} size="default" />}
+    <div className={styles.ingredient_container} onClick={showDetails} ref={ref}>
+      {counter[ingredient._id] > 0 && (
+        <Counter count={counter[ingredient._id]} size="default" />
+      )}
       <img src={image} alt={`изображение ${name}`} />
       <div className={styles.price_wrapper}>
         <Typography

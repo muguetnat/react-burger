@@ -1,50 +1,28 @@
-import { useEffect, useState } from 'react';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
 
 import { AppHeader } from '@components/app-header/app-header';
 import { BurgerConstructor } from '@components/burger-constructor/burger-constructor';
 import { BurgerIngredients } from '@components/burger-ingredients/burger-ingredients';
 import Typography from '@components/shared/typography';
-
-import type { TIngredient } from '@/utils/types';
+import { useGetIngredientsQuery } from '@services/api';
 
 import styles from './app.module.css';
-const API_URL = 'https://new-stellarburgers.education-services.ru/api/ingredients';
-type TResponse = {
-  success: boolean;
-  data: TIngredient[];
-};
 
 export const App = (): React.JSX.Element => {
-  const [data, setData] = useState<TIngredient[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetch(API_URL)
-      .then((response) => {
-        return response.ok
-          ? response.json()
-          : Promise.reject(new Error(`Ошибка ${response.status}`));
-      })
-      .then((response: TResponse) => {
-        if (response.success) {
-          setData(response.data);
-          setLoading(false);
-        }
-      })
-      .catch((error) => {
-        console.log(`Ошибка ${JSON.stringify(error)}`);
-      });
-  }, []);
+  const { data = [], isLoading: loading } = useGetIngredientsQuery();
 
   if (loading) return <p>Загрузка...</p>;
   return (
     <div className={styles.app}>
       <AppHeader />
       <Typography type="large" extraClass={styles.title} text="Соберите бургер" />
-      <main className={`${styles.main} pl-5 pr-5`}>
-        <BurgerIngredients ingredients={data} />
-        <BurgerConstructor ingredients={data} />
-      </main>
+      <DndProvider backend={HTML5Backend}>
+        <main className={`${styles.main} pl-5 pr-5`}>
+          <BurgerIngredients ingredients={data} />
+          <BurgerConstructor />
+        </main>
+      </DndProvider>
     </div>
   );
 };
